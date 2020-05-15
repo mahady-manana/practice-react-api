@@ -24,8 +24,10 @@ class App extends Component {
     this.state = {
       list: list,
     };
-    //
-    //this.onDismiss = this.onDismiss.bind(this);
+    //bindings
+    this.doSomething = this.doSomething.bind(this);
+    this.doSomethingElse = this.doSomethingElse.bind(this);
+    this.onClickMe = this.onClickMe.bind(this);
   }
 
   onDismiss(id) {
@@ -34,7 +36,15 @@ class App extends Component {
     const updatedList = this.state.list.filter(isNotId);
     this.setState({ list: updatedList });
   }
-
+  doSomething() {
+    // faire quelque chose
+  }
+  doSomethingElse() {
+    // faire autre chose
+  }
+  onClickMe() {
+    console.log(this);
+  }
   render() {
     return (
       <div className="App">
@@ -58,6 +68,12 @@ class App extends Component {
             </div>
           )
         }
+        <button
+          onClick={this.onClickMe}
+          type="button"
+          >
+          Click Me
+        </button>
       </div>
     )
   }
