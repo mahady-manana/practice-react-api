@@ -1,4 +1,5 @@
 import React, {Component} from 'react'; 
+import Button from './Button';
 //data
 const list = [
     {
@@ -71,9 +72,9 @@ class Table extends Component {
                                 <td>{item.author}</td> 
                                 <td>
                                     <span>
-                                        <button onClick={()=>this.onDismiss(item.objectID)}>
+                                        <Button onClick={()=>this.onDismiss(item.objectID)}>
                                             del.
-                                        </button>
+                                        </Button> 
                                     </span>
                                 </td>
                             </tr>
