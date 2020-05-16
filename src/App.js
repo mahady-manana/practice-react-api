@@ -45,9 +45,7 @@ class App extends Component {
       searchTerm: '',
     };
     //bindings
-    this.doSomething      = this.doSomething.bind(this);
-    this.doSomethingElse  = this.doSomethingElse.bind(this);
-    this.onClickMe        = this.onClickMe.bind(this);
+    this.onDismiss      = this.onDismiss.bind(this); 
     this.onSearchChange   = this.onSearchChange.bind(this);
   }
 
@@ -55,16 +53,7 @@ class App extends Component {
     const isNotId     = item => item.objectID !== id;
     const updatedList = this.state.list.filter(isNotId);
     this.setState({ list: updatedList });
-  }
-  doSomething() {
-    // faire quelque chose
-  }
-  doSomethingElse() {
-    // faire autre chose
-  }
-  onClickMe() {
-    console.log(this);
-  }
+  } 
   onSearchChange(event) {
     console.log(event)
     this.setState({ searchTerm: event.target.value });
@@ -96,13 +85,7 @@ class App extends Component {
               </span>
             </div>
           )
-        }
-        <button
-          onClick={this.onClickMe}
-          type="button"
-          >
-          Click Me
-        </button>
+        } 
       </div>
     )
   }
