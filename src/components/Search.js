@@ -18,7 +18,7 @@ class Search extends Component {
         return (
             <div>
                 <form>
-                    <input type="text" onChange={this.onSearchChange} value={searchTerm}/>
+                    {this.props.children} <input type="text" onChange={this.onSearchChange} value={searchTerm}/>
                 </form>
                 <Table searchTerm={searchTerm}/>
             </div>
