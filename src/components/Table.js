@@ -18,7 +18,7 @@ class Table extends Component {
         const isNotId       = item => item.objectID !== id;
         const updatedList   = resultat.hits.filter(isNotId);
         this.setState({ 
-            resultat: Object.assign({},resultat,{hits:updatedList}) 
+            resultat: {...resultat,hits:updatedList}  
         });  
     }
     
