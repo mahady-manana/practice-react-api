@@ -1,32 +1,36 @@
-import React, {Component} from 'react'; 
-import Button from './Button'; 
-//foncions d'ordre supérieur
-const isSearched = searchTerm => item =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase());
-
+import React, {Component} from 'react';
+import Button from './Button';
 class Table extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            resultat: this.props.list,  
+            resultat: this.props.list,
         }
-        this.onDismiss      = this.onDismiss.bind(this); 
+        this.onDismiss      = this.onDismiss.bind(this);
     }
 
     onDismiss(id) {
         const {resultat}    = this.state;
         const isNotId       = item => item.objectID !== id;
         const updatedList   = resultat.hits.filter(isNotId);
-        this.setState({ 
-            resultat: {...resultat,hits:updatedList}  
-        });  
+        this.setState({
+            resultat: {...resultat,hits:updatedList}
+        });
     }
-    
-    render() {  
+
+    componentWillReceiveProps(nextProps){
+        if (nextProps.list !== this.props.list){
+            this.setState({
+                resultat: nextProps.list,
+            });
+        }
+    }
+
+    render() {
         const {resultat} = this.state;
         return (
              <table>
-                 <thead> 
+                 <thead>
                      <tr>
                         <th>title</th>
                         <th>author</th>
@@ -34,16 +38,16 @@ class Table extends Component {
                      </tr>
                  </thead>
                  <tbody>
-                    { 
-                       resultat.hits.filter( isSearched(this.props.searchTerm) ).map(item => 
+                    {
+                       resultat.hits.map(item =>
                             <tr key={item.objectID}>
                                 <td>{item.title}</td>
-                                <td>{item.author}</td> 
+                                <td>{item.author}</td>
                                 <td>
                                     <span>
                                         <Button onClick={()=>this.onDismiss(item.objectID)}>
                                             del.
-                                        </Button> 
+                                        </Button>
                                     </span>
                                 </td>
                             </tr>
@@ -54,5 +58,5 @@ class Table extends Component {
         );
     }
 }
- 
+
 export default Table;
