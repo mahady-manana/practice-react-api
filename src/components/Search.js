@@ -6,6 +6,7 @@ const DEFAULT_QUERY = 'redux';
 const PATH_BASE     = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH   = '/search';
 const PARAM_SEARCH  = 'query=';
+const PARAM_PAGE    = 'page=';
 
 class Search extends Component {
     constructor(props) {
@@ -21,8 +22,13 @@ class Search extends Component {
         this.onSearchSubmit         = this.onSearchSubmit.bind(this);
     }
 
-    setSearchTopStories(result){
-        this.setState({result});
+    setSearchTopStories(result){ 
+        const {hits,page}   = result;
+        const oldResult     = page !== 0 ? this.state.result.hits : [];
+        const updateList    = [...oldResult,...hits];
+        this.setState({
+            result:{hits :updateList,page}
+        });
     }
 
     componentDidMount(){
@@ -30,8 +36,8 @@ class Search extends Component {
         this.fetchSearchTopStories(searchTerm);
     }
 
-    fetchSearchTopStories(searchTerm) {
-        fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+    fetchSearchTopStories(searchTerm, page = 0) {
+        fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
             .then(response => response.json())
             .then(result => this.setSearchTopStories(result))
             .catch(error => error);
@@ -48,7 +54,8 @@ class Search extends Component {
     }
 
     render() {
-        const {searchTerm, result} = this.state;
+        const {searchTerm, result} = this.state;        
+        const page = (result && result.page) || 0;
         if(!result)
            return <div>Aucune donnée</div>;
 
@@ -62,6 +69,11 @@ class Search extends Component {
                     </Button>
                 </form>
                 <Table searchTerm={searchTerm} list={result}/>
+                <div>
+                    <Button onClick={()=>this.fetchSearchTopStories(searchTerm,page+1)}>
+                        Voir plus
+                    </Button>
+                </div>
             </div>
         );
     }
