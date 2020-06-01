@@ -12,27 +12,47 @@ class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            result: null,
+            results: null,
             searchTerm: DEFAULT_QUERY,
-
+            searchKey: ''
         }
+
         this.onSearchChange         = this.onSearchChange.bind(this);
         this.setSearchTopStories    = this.setSearchTopStories.bind(this) ;
         this.fetchSearchTopStories  = this.fetchSearchTopStories.bind(this);
         this.onSearchSubmit         = this.onSearchSubmit.bind(this);
+        this.dataExist              = this.dataExist.bind(this);
+        this.deletiavo              = this.deletiavo.bind(this);
     }
 
     setSearchTopStories(result){ 
-        const {hits,page}   = result;
-        const oldResult     = page !== 0 ? this.state.result.hits : [];
-        const updateList    = [...oldResult,...hits];
+        const { hits, page } = result;
+        const { results, searchKey } = this.state;
+        const oldHits           = results && results[searchKey] ? results[searchKey].hits : [];
+        const updatedHits       = [ ...oldHits,...hits ];
+        
         this.setState({
-            result:{hits :updateList,page}
+            results: { 
+                ...results, 
+                [searchKey]: { hits : updatedHits, page } 
+            }
         });
+    }
+
+    deletiavo(id) {
+        const { results, searchKey } = this.state;
+        const { hits, page } = results[searchKey];
+        const isNotId       = item => item.objectID !== id;        
+        const updatedList   = hits.filter(isNotId); 
+        
+        this.setState({
+            results: { ...results, [searchKey] : {hits: updatedList, page} }
+        }); 
     }
 
     componentDidMount(){
         const {searchTerm} = this.state;
+        this.setState({ searchKey: searchTerm });
         this.fetchSearchTopStories(searchTerm);
     }
 
@@ -45,8 +65,16 @@ class Search extends Component {
 
     onSearchSubmit(event) {
         const { searchTerm } = this.state;
-        this.fetchSearchTopStories(searchTerm);
+        this.setState({ searchKey : searchTerm });
+
+        if(!this.dataExist(searchTerm))
+            this.fetchSearchTopStories(searchTerm);
+        
         event.preventDefault();
+    }
+
+    dataExist(searchTerm){ 
+        return this.state.results[searchTerm];
     }
 
     onSearchChange(event) {
@@ -54,9 +82,11 @@ class Search extends Component {
     }
 
     render() {
-        const {searchTerm, result} = this.state;        
-        const page = (result && result.page) || 0;
-        if(!result)
+        const { searchTerm, results, searchKey } = this.state;        
+        const page = ( results && results[searchKey] && results[searchKey].page ) || 0;
+        const list = (results && results[searchKey] && results[searchKey].hits) || [];// 
+        
+        if(!results)
            return <div>Aucune donnée</div>;
 
         return (
@@ -68,9 +98,9 @@ class Search extends Component {
                         find
                     </Button>
                 </form>
-                <Table searchTerm={searchTerm} list={result}/>
+                <Table list={list} deletiavo={this.deletiavo}/>
                 <div>
-                    <Button onClick={()=>this.fetchSearchTopStories(searchTerm,page+1)}>
+                    <Button onClick={()=>this.fetchSearchTopStories(searchKey, page+1)}>
                         Voir plus
                     </Button>
                 </div>
